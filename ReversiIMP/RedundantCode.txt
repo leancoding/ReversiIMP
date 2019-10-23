@@ -1,0 +1,202 @@
+﻿		/////////////////////////////////////////
+		///////////// OUDE METHODEN//////////////
+		/////////////////////////////////////////
+
+
+        bool IsValidMoveRedundant(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (matrix[p.X, p.Y] != Tile.Empty)
+                return false;
+
+            // Controleren of er een steen van een andere kleur ergens om het punt zit
+            // List geven van functies die alle zijden checkt en in een for loop stoppen, i.p.v. alles handmatig aanroepen?
+
+            if (TileUp(p, matrix, cp, op) || TileUpRight(p, matrix, cp, op) || TileRight(p, matrix, cp, op) || TileDownRight(p, matrix, cp, op) || TileDown(p, matrix, cp, op) || TileDownLeft(p, matrix, cp, op) || TileLeft(p, matrix, cp, op) || TileUpLeft(p, matrix, cp, op))
+                return true;
+
+            return false;
+        }
+
+        #region TileLookupMethods
+        //
+        // PROBLEM SOLVED: Deze omslachtige methode niet meer nodig!! 
+        // WERKTE UBERHAUPT NIET ZO
+        //
+        // Geen zin om dit telkens te moeten kopiëren, dus manier verzinnen waardoor hij meer vormen aan kan nemen. 
+        // Nu maar volgens deze manier...
+        /* 
+         * Up: p.Y == 0; p.Y - 1, p.Y 
+         * Up right: p.Y == 0; p.X - 1, p.Y - 1
+         */
+
+        public bool TileUp(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            // Indien het y-coördinaat 0 is, kan er niks boven bevinden
+            if (p.Y == 0)
+                return false;
+
+            // Indien er een steen van de andere partij boven zit, controleer op een nabijgelegen eigen steen
+            else if (matrix[p.X, p.Y - 1] == op)
+            {
+                for (int i = 1; p.Y - i >= 0; i++)
+                {
+                    if (matrix[p.X, p.Y - 1 - i] == cp)
+                        return true;
+                    else if (matrix[p.X, p.Y - 1 - i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileUpRight(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            // Indien het y-coördinaat 0 is, kan er niks boven bevinden
+            if (p.Y == 0 || p.X == boardSize - 1)
+                return false;
+
+            // Indien er een steen van de andere partij boven zit, controleer op een nabijgelegen eigen steen
+            else if (matrix[p.X + 1, p.Y - 1] == op)
+            {
+                for (int i = 1; p.Y >= 0; i++)
+                {
+                    if (matrix[p.X + 1 + i, p.Y - 1 - i] == cp)
+                        return true;
+                    else if (matrix[p.X + 1 + i, p.Y - 1 - i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileRight(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            // Indien e.g. 7, kan niks naast zitten
+            if (p.X == boardSize - 1)
+                return false;
+
+            else if (matrix[p.X + 1, p.Y] == op)
+            {
+                for (int i = 1; p.X < boardSize; i++)
+                {
+                    if (matrix[p.X + 1 + i, p.Y] == cp)
+                        return true;
+                    else if (matrix[p.X + 1 + i, p.Y] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileDownRight(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (p.Y == boardSize - 1 || p.X == boardSize - 1)
+                return false;
+
+            else if (matrix[p.X + 1, p.Y + 1] == op)
+            {
+                for (int i = 1; p.X + 1 < boardSize; i++)
+                {
+                    if (matrix[p.X + 1 + i, p.Y + 1 + i] == cp)
+                        return true;
+                    else if (matrix[p.X + 1 + i, p.Y + 1 + i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileDown(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (p.Y == boardSize - 1)
+                return false;
+
+            else if (matrix[p.X, p.Y + 1] == op)
+            {
+                for (int i = 1; p.Y + 1 < boardSize; i++)
+                {
+                    if (matrix[p.X, p.Y + 1 - i] == cp)
+                        return true;
+                    else if (matrix[p.X, p.Y + 1 - i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileDownLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (p.Y == boardSize - 1 || p.X == 0)
+                return false;
+
+            else if (matrix[p.X - 1, p.Y + 1] == op)
+            {
+                for (int i = 1; p.X - 1 >= 0; i++)
+                {
+                    if (matrix[p.X - 1 - i, p.Y + 1 + i] == cp)
+                        return true;
+                    else if (matrix[p.X - 1 + i, p.Y + 1 + i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+
+        public bool TileLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (p.X == 0)
+                return false;
+
+            else if (matrix[p.X - 1, p.Y] == op)
+            {
+                for (int i = 1; p.X >= 0; i++)
+                {
+                    if (matrix[p.X - 1 - i, p.Y] == cp)
+                        return true;
+                    else if (matrix[p.X - 1 - i, p.Y] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        public bool TileUpLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
+        {
+            if (p.Y == 0 || p.X == 0)
+                return false;
+
+            else if (matrix[p.X - 1, p.Y - 1] == op)
+            {
+                for (int i = 1; p.X >= 0; i++)
+                {
+                    if (matrix[p.X - 1 - i, p.Y - 1 - i] == cp)
+                        return true;
+                    else if (matrix[p.X - 1 - i, p.Y - 1 - i] == Tile.Empty)
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        #endregion
+
+        // Wordt aangeroepen indien de gebruiker op Help drukt
+        // Deze werkte niet eens... 
+        public Point[] PossibleMovesRedundant(Tile[,] matrix, Tile cp, Tile op)
+        {
+            List<Point> possiblePoints = new List<Point>();
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    Point tempPoint = new Point(i, j);
+                    if (matrix[i, j] == Tile.Empty)
+                        if (TileUp(tempPoint, matrix, cp, op) || TileUpRight(tempPoint, matrix, cp, op) || TileRight(tempPoint, matrix, cp, op) || TileDownRight(tempPoint, matrix, cp, op) || TileDown(tempPoint, matrix, cp, op) || TileDownLeft(tempPoint, matrix, cp, op) || TileLeft(tempPoint, matrix, cp, op) || TileUpLeft(tempPoint, matrix, cp, op))
+                            possiblePoints.Add(tempPoint);
+                }
+            }
+            return possiblePoints.ToArray();
+        }
+

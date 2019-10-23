@@ -12,196 +12,49 @@ namespace ReversiIMP
     /// </summary>
     class GameCore
     {
-
-        private Board reversiBoard;
+        #region members
+        private Board board;
+        private Board backupBoard; 
         private int boardSize;
-
-        public void NewGame()
-        {
-            reversiBoard = new Board();
-            boardSize = reversiBoard.BoardSize;
-        }
-        
-        bool IsValidMoveRedundant(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (matrix[p.X, p.Y] != Tile.Empty)
-                return false;
-
-            // Controleren of er een steen van een andere kleur ergens om het punt zit
-            // List geven van functies die alle zijden checkt en in een for loop stoppen, i.p.v. alles handmatig aanroepen?
-
-            if (TileUp(p, matrix, cp, op) || TileUpRight(p, matrix, cp, op) || TileRight(p, matrix, cp, op) || TileDownRight(p, matrix, cp, op) || TileDown(p, matrix, cp, op) || TileDownLeft(p, matrix, cp, op) || TileLeft(p, matrix, cp, op) || TileUpLeft(p, matrix, cp, op))
-                return true;
-
-            return false;
-        }
-
-        #region TileLookupMethods
-        //
-        // PROBLEM SOLVED: Deze omslachtige methode niet meer nodig!! 
-        // WERKTE UBERHAUPT NIET ZO
-        //
-        // Geen zin om dit telkens te moeten kopiëren, dus manier verzinnen waardoor hij meer vormen aan kan nemen. 
-        // Nu maar volgens deze manier...
-        /* 
-         * Up: p.Y == 0; p.Y - 1, p.Y 
-         * Up right: p.Y == 0; p.X - 1, p.Y - 1
-         */
-
-        public bool TileUp(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            // Indien het y-coördinaat 0 is, kan er niks boven bevinden
-            if (p.Y == 0)
-                return false;
-
-            // Indien er een steen van de andere partij boven zit, controleer op een nabijgelegen eigen steen
-            else if (matrix[p.X, p.Y - 1] == op)
-            {
-                for (int i = 1; p.Y - i >= 0; i++)
-                {
-                    if (matrix[p.X, p.Y - 1 - i] == cp)
-                        return true;
-                    else if (matrix[p.X, p.Y - 1 - i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileUpRight(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            // Indien het y-coördinaat 0 is, kan er niks boven bevinden
-            if (p.Y == 0 || p.X == boardSize - 1)
-                return false;
-
-            // Indien er een steen van de andere partij boven zit, controleer op een nabijgelegen eigen steen
-            else if (matrix[p.X + 1, p.Y - 1] == op)
-            {
-                for (int i = 1; p.Y >= 0; i++)
-                {
-                    if (matrix[p.X + 1 + i, p.Y - 1 - i] == cp)
-                        return true;
-                    else if (matrix[p.X + 1 + i, p.Y - 1 - i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileRight(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            // Indien e.g. 7, kan niks naast zitten
-            if (p.X == boardSize - 1)
-                return false;
-
-            else if (matrix[p.X + 1, p.Y] == op)
-            {
-                for (int i = 1; p.X < boardSize; i++)
-                {
-                    if (matrix[p.X + 1 + i, p.Y] == cp)
-                        return true;
-                    else if (matrix[p.X + 1 + i, p.Y] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileDownRight(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (p.Y == boardSize - 1 || p.X == boardSize - 1)
-                return false;
-
-            else if (matrix[p.X + 1, p.Y + 1] == op)
-            {
-                for (int i = 1; p.X + 1 < boardSize; i++)
-                {
-                    if (matrix[p.X + 1 + i, p.Y + 1 + i] == cp)
-                        return true;
-                    else if (matrix[p.X + 1 + i, p.Y + 1 + i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileDown(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (p.Y == boardSize - 1)
-                return false;
-
-            else if (matrix[p.X, p.Y + 1] == op)
-            {
-                for (int i = 1; p.Y + 1 < boardSize; i++)
-                {
-                    if (matrix[p.X, p.Y + 1 - i] == cp)
-                        return true;
-                    else if (matrix[p.X, p.Y + 1 - i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileDownLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (p.Y == boardSize - 1 || p.X == 0)
-                return false;
-
-            else if (matrix[p.X - 1, p.Y + 1] == op)
-            {
-                for (int i = 1; p.X - 1 >= 0; i++)
-                {
-                    if (matrix[p.X - 1 - i, p.Y + 1 + i] == cp)
-                        return true;
-                    else if (matrix[p.X - 1 + i, p.Y + 1 + i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-
-        public bool TileLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (p.X == 0)
-                return false;
-
-            else if (matrix[p.X - 1, p.Y] == op)
-            {
-                for (int i = 1; p.X >= 0; i++)
-                {
-                    if (matrix[p.X - 1 - i, p.Y] == cp)
-                        return true;
-                    else if (matrix[p.X - 1 - i, p.Y] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
-
-        public bool TileUpLeft(Point p, Tile[,] matrix, Tile cp, Tile op)
-        {
-            if (p.Y == 0 || p.X == 0)
-                return false;
-
-            else if (matrix[p.X - 1, p.Y - 1] == op)
-            {
-                for (int i = 1; p.X >= 0; i++)
-                {
-                    if (matrix[p.X - 1 - i, p.Y - 1 - i] == cp)
-                        return true;
-                    else if (matrix[p.X - 1 - i, p.Y - 1 - i] == Tile.Empty)
-                        return false;
-                }
-            }
-            return false;
-        }
+        private Player[] players;
 
         #endregion
 
-        // Dit moet bovenstaande methoden opsommen en simplificeren
-        // Snap niet waarom ik daar aan begon -.- 
+        public void NewGame()
+        {
+            board = new Board();
+            boardSize = board.BoardSize;
+        }
+
+        public void ShowBoard()
+        {
+            String res = " ";
+            for (int i = 0; i < boardSize; i++) res += i.ToString();
+            res += "\n";
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                res += i.ToString();
+                for (int j = 0; j < boardSize; j++)
+                {
+                    if (board.RetrieveTileValue(j,i) == Tile.Empty)
+                        res += "-";
+                    else
+                        res += board.RetrieveTileValue(j,i) == Tile.Blue ? "*" : "O";
+                }
+                res += "\n";
+            }
+            Console.WriteLine(res);
+        }
+        
+        public int Boardsize
+        {
+            get 
+            {
+                return boardSize;
+            }
+
+        }
 
         public bool IsInBounds(Point p)
         {
@@ -224,8 +77,8 @@ namespace ReversiIMP
          *         2. Andere speler? Ga richting (i,j) en vervolg
          *         3. CurrentPlayer? return true; 
          */
-         
-        public bool IsValidMove(Point p, Tile[,] matrix, Tile cp, Tile op)
+                  
+        public bool IsValidMove(Point p, Tile cp, Tile op)
         {
             // Console.WriteLine("Searching tiles around " + p.X + " " + p.Y); 
             for (int i = - 1; i <= 1; i++)
@@ -237,57 +90,75 @@ namespace ReversiIMP
                     // Console.WriteLine(IsInBounds(temp)); 
 
                     if (IsInBounds(temp))
-                        if (matrix[temp.X, temp.Y] == Tile.Empty || matrix[temp.X, temp.Y] == cp)
+                        if (board.RetrieveTileValue(temp) == Tile.Empty || board.RetrieveTileValue(temp) == cp)
                             continue;
 
                     while(IsInBounds(temp))
                     {
-                        if (matrix[temp.X, temp.Y] == Tile.Empty)
-                            // return false;
+                        if (board.RetrieveTileValue(temp) == Tile.Empty)
                             break;
 
-                        if (matrix[temp.X, temp.Y] == op)
+                        if (board.RetrieveTileValue(temp) == op)
                         {
                             temp.X += i; temp.Y += j;
                             continue;
                         }
 
-                        if (matrix[temp.X, temp.Y] == cp)
+                        if (board.RetrieveTileValue(temp) == cp)
                             return true;
                     }
                 }
             return false;
         }
 
-        public void FlipStones(Point p, Tile[,] matrix, Tile cp, Tile op)
+
+        // Wordt aangeroepen indien de gebruiker op Help drukt
+        public Point[] PossibleMoves(Tile cp, Tile op)
         {
-            // Dit moet makkelijker kunnen, is namelijk gewoon een dIrecte kopie van isValidMove
-            Console.WriteLine("Flipping stones around " + p.X + " " + p.Y); 
+            List<Point> possiblePoints = new List<Point>();
+
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    Point tempPoint = new Point(i, j);
+                    if (board.RetrieveTileValue(tempPoint) == Tile.Empty)
+                        if (IsValidMove(tempPoint, cp, op))
+                            possiblePoints.Add(tempPoint);
+                }
+            }
+            return possiblePoints.ToArray();
+        }
+
+        public void FlipStones(Point p, Tile cp, Tile op)
+        {
+            // Dit moet makkelijker kunnen, is namelijk gewoon een directe kopie van isValidMove
+            Console.WriteLine("Flipping stones around " + p.X + " " + p.Y);
             for (int i = -1; i <= 1; i++)
                 for (int j = -1; j <= 1; j++)
                 {
                     Point temp = new Point(p.X + i, p.Y + j);
 
                     if (IsInBounds(temp))
-                        if (matrix[temp.X, temp.Y] == Tile.Empty || matrix[temp.X, temp.Y] == cp)
+                        if (board.RetrieveTileValue(temp) == Tile.Empty || board.RetrieveTileValue(temp) == cp)
                             continue;
 
                     while (IsInBounds(temp))
                     {
-                        if (matrix[temp.X, temp.Y] == Tile.Empty)
+                        if (board.RetrieveTileValue(temp) == Tile.Empty)
                             break;
 
-                        if (matrix[temp.X, temp.Y] == op)
+                        if (board.RetrieveTileValue(temp) == op)
                         {
                             temp.X += i; temp.Y += j;
                             continue;
                         }
 
-                        if (matrix[temp.X, temp.Y] == cp)
+                        if (board.RetrieveTileValue(temp) == cp)
                         {
-                            while(temp != p)
+                            while (temp != p)
                             {
-                                matrix[temp.X, temp.Y] = cp;
+                                board.SetTileValue(temp, cp);
                                 temp.X -= i; temp.Y -= j;
                                 Console.WriteLine("Changing tile" + temp.X + temp.Y);
                             }
@@ -297,62 +168,43 @@ namespace ReversiIMP
                 }
         }
 
-
-        // Wordt aangeroepen indien de gebruiker op Help drukt
-        // Deze werkte niet eens... 
-        public Point[] PossibleMovesRedundant(Tile[,] matrix, Tile cp, Tile op)
-        {
-            List<Point> possiblePoints = new List<Point>();
-
-            for (int i = 0; i < boardSize; i++)
-            {
-                for (int j = 0; j < boardSize; j++)
-                {
-                    Point tempPoint = new Point(i, j);
-                    if (matrix[i, j] == Tile.Empty)
-                        if (TileUp(tempPoint, matrix, cp, op) || TileUpRight(tempPoint, matrix, cp, op) || TileRight(tempPoint, matrix, cp, op) || TileDownRight(tempPoint, matrix, cp, op) || TileDown(tempPoint, matrix, cp, op) || TileDownLeft(tempPoint, matrix, cp, op) || TileLeft(tempPoint, matrix, cp, op) || TileUpLeft(tempPoint, matrix, cp, op))
-                            possiblePoints.Add(tempPoint);
-                }
-            }
-            return possiblePoints.ToArray();
-        }
-
-
-        // Wordt aangeroepen indien de gebruiker op Help drukt
-        public Point[] PossibleMoves(Tile[,] matrix, Tile cp, Tile op)
-        {
-            List<Point> possiblePoints = new List<Point>();
-
-            for (int i = 0; i < boardSize; i++)
-            {
-                for (int j = 0; j < boardSize; j++)
-                {
-                    Point tempPoint = new Point(i, j);
-                    if (matrix[i,j] == Tile.Empty)
-                        if (IsValidMove(tempPoint, matrix, cp, op))
-                            possiblePoints.Add(tempPoint);
-                }
-            }
-            return possiblePoints.ToArray();
-        }
-
         // Controleert of speler nog een zet kan doen
-        public bool HasMovesLeft(Tile[,] matrix, Tile cp, Tile op)
+        public bool HasMovesLeft(Tile cp, Tile op)
         {
-            if (PossibleMoves(matrix, cp, op).Length > 0)
+            if (PossibleMoves(cp, op).Length > 0)
                 return true;
 
             return false;
         }
 
-        // TO-DO: Misschien hier een property van maken, heeft niks meer nodig dan de bord matrix
         // Is het spel afgelopen?
-        public bool GameFinished(Tile[,] matrix)
+        public bool GameFinished
         {
-            if (PossibleMoves(matrix, Tile.Blue, Tile.Red).Length == 0 || PossibleMoves(matrix, Tile.Red, Tile.Blue).Length == 0)
-                return true;
+            get
+            {
+                if (PossibleMoves(Tile.Blue, Tile.Red).Length == 0 || PossibleMoves(Tile.Red, Tile.Blue).Length == 0)
+                    return true;
+                return false;
+            }
+        }
 
-            return false;
+        public void MoveRecord()
+        {
+            Board b;
+        }
+
+        public void playerMadeMove(Point p, Tile cp, Tile op)
+        {
+            if(IsValidMove(p, cp, op))
+            {
+                board.SetTileValue(p, cp);
+                FlipStones(p, cp, op);
+
+
+                if (HasMovesLeft(op, cp)) ;
+                    // verander beurt
+
+            }
         }
 
     }

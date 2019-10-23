@@ -10,20 +10,26 @@ namespace ReversiIMP
 {
     class ReversiForm : Form
     {
-        GameCore c;
+        #region Members
+        GameCore core;
+        private List<Button> buttonList;
+        private Panel board;
+
         private bool player1Turn;
-
         private bool gameEnded;
+        
         int redStones;
-        int blueStones; 
+        int blueStones;
 
+        #endregion
 
         ReversiForm()
         {
             ClientSize = new Size();
-            this.Text = "Reversi";
+            Text = "Reversi";
+            StartPosition = FormStartPosition.CenterScreen;
 
-            c = new GameCore(); 
+            core = new GameCore(); 
 
             #region Buttons
             Button newGameBtn= new Button()
@@ -69,61 +75,83 @@ namespace ReversiIMP
                 nextPlayerLbl
             });
 
-            GroupBox board = new GroupBox();
-
-            PictureBox[,] tiles = new PictureBox[6, 6];
-
         }
+
+        private void BoardCreator()
+        {
+            board = new Panel();
+            buttonList = new List<Button>();
+            for (int i = 0; i < core.Boardsize; i++)
+            {
+                for (int j = 0; j < core.Boardsize; j++)
+                {
+                    Button btn = new Button();
+                    btn.Size = new Size(40, 40);
+                    btn.Location = new Point(i * 40, j * 40);
+                    btn.Click += Button_Click;
+                    buttonList.Add(btn);
+                }
+            }
+            board.Controls.AddRange(buttonList.ToArray());
+        }
+
 
         private void HelpButton_Click(object sender, EventArgs e)
         {
-            // c.PossibleMoves(); 
+            // core.PossibleMoves(); 
         }
 
         private void NewGameButton_Click(object sender, EventArgs e)
         {
-            c.NewGame();
+            core.NewGame();
             Invalidate();
         }
 
         private void Button_Click(object sender, EventArgs e)
         {
+            
             /*
              * Wanneer de speler op een vak klikt, moeten de volgende gebeurtenissen plaatsvinden:
-             * * Is het spel afgelopen?
+             * 1.   Is het spel afgelopen?
+             * 
+             * In GameCore:
              * 1.	Controleer of de zet correct is: IsValidMove()
              * 2.	Verander kleur van vak: board.SetTileValue(p, color)
              * 3.	Verander stenen die omringd zijn: flipStones(point, cp, op)
              * 4.	Verander beurt 
              * 5.	Controleer of andere partij een zet kan maken, zo niet verander terug: HasMoves(cp)
              * 6.	Controleer of het spel is afgelopen GameFinished()
-             * 7.	Werk scores bij
+             * 7.	Werk scores bij: updateScores()
             */
 
-            /*
-            if (c.GameFinished())
+            if (core.GameFinished)
             {
                 MessageBox.Show("The game has ended");
                 return;
-            } */
-
+            }
+                       
             // Kopie maken van knop, om er achter te komen wie Button_Click heeft aangeroepen. 
             Button button = (Button)sender;
+            int index = buttonList.IndexOf(button);
+
+            Point newMove = new Point(index % core.Boardsize, index / core.Boardsize);
+
+            core.playerMadeMove(newMove); 
 
             //// Afhankelijk van huidige speler, geef vak een waarde
             //results[index] = player1Turn ? Player1.Tile : Player2.;
 
-            //// Zorg er voor dat de PictureBox ook desbetreffende kleur krijgt
-
-
             // Verandert hem telkens om de beurt
             player1Turn ^= true; // player1Turn = !player1Turn; 
+
+
         }
 
-        private void updateCounts()
+        private void UpdateCounts()
         {
-
+            
         }
+
 
 
 

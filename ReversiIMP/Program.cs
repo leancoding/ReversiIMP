@@ -11,27 +11,6 @@ namespace ReversiIMP
     {
         #region testMethods
 
-        static void showBoard(Board b)
-        {
-            String res = " ";
-            for (int i = 0; i < b.BoardSize; i++) res += i.ToString();
-            res += "\n"; 
-
-            for (int i = 0; i < b.BoardSize; i++)
-            {
-                res += i.ToString();
-                for (int j = 0; j < b.BoardSize; j++)
-                {
-                    if (b.Matrix[j, i] == Tile.Empty)
-                        res += "-";
-                    else
-                        res += b.Matrix[j, i] == Tile.Blue ? "*" : "O";
-                }
-                res += "\n";
-            }
-            Console.WriteLine(res);
-        }
-
 
         #endregion
         static void Main(string[] args)
@@ -51,43 +30,43 @@ namespace ReversiIMP
 
             // Bord laten zien
             // (3,4) is niet veranderd :)
-            showBoard(test);
-            showBoard(testBCopy);
+
 
             // Checken of een zet mogelijk is?
             GameCore core = new GameCore();
             core.NewGame();
+            core.ShowBoard();
 
             Console.WriteLine("IsInbounds (3,4) " + core.IsInBounds(new Point(3, 4)));
 
-            Console.WriteLine("Check (2,4) " + core.IsValidMove(new Point(2, 4), test.Matrix, Tile.Blue, Tile.Red) + "\n") ;
+            Console.WriteLine("Check (2,4) " + core.IsValidMove(new Point(2, 4), Tile.Blue, Tile.Red) + "\n") ;
 
             // Alle mogelijke posities
-            Point[] temp = core.PossibleMoves(test.Matrix, Tile.Red, Tile.Blue);
+            Point[] temp = core.PossibleMoves(Tile.Red, Tile.Blue);
             Console.WriteLine(temp.Length); 
             foreach (Point p in temp)
                  Console.WriteLine(p.X + " " + p.Y);
 
             // Game finished?
-            Console.WriteLine("Is het spel afgelopen: " + core.GameFinished(test.Matrix));
+            Console.WriteLine("Is het spel afgelopen: " + core.GameFinished);
 
             // Flipping stones, klinkt als een liedje
             test.Matrix[1, 3] = Tile.Blue;
-            core.FlipStones(new Point(1, 3), test.Matrix, Tile.Blue, Tile.Red);
-            showBoard(test);
+            core.FlipStones(new Point(1, 3), Tile.Blue, Tile.Red);
+            core.ShowBoard();
 
             test.Matrix[1,4] = Tile.Red;
-            core.FlipStones(new Point(1, 4), test.Matrix, Tile.Red, Tile.Blue);
-            showBoard(test);
+            core.FlipStones(new Point(1, 4), Tile.Red, Tile.Blue);
+            core.ShowBoard();
 
             test.Matrix[2, 4] = Tile.Blue;
-            core.FlipStones(new Point(2, 4), test.Matrix, Tile.Blue, Tile.Red);
-            showBoard(test);
+            core.FlipStones(new Point(2, 4), Tile.Blue, Tile.Red);
+            core.ShowBoard();
 
             test.Matrix[1, 2] = Tile.Red;
-            core.FlipStones(new Point(1, 2), test.Matrix, Tile.Red, Tile.Blue);
+            core.FlipStones(new Point(1, 2), Tile.Red, Tile.Blue);
 
-            showBoard(test);
+            core.ShowBoard();
 
             // Dit klopt dus helaas niet.. 
             /*  012345
@@ -98,6 +77,10 @@ namespace ReversiIMP
                 4-O*---
                 5------
                 */
+            // Nu klopt alles!
+
+            // Index testen
+            Console.WriteLine(2 % 6 + " " + 2 / 6 );
             Console.ReadLine();
 
         }
