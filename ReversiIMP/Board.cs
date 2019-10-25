@@ -14,23 +14,6 @@ namespace ReversiIMP
         Blue = -1
     }
 
-    public class Player
-    {
-        String name;
-        Tile color { get; }
-
-        public Player(String n, Tile t)
-        {
-            name = n;
-            color = t;
-        }
-
-        public override string ToString()
-        {
-            return name;
-        }
-    }
-
     public class Board
     {
         #region  Members
@@ -118,7 +101,6 @@ namespace ReversiIMP
             tileMatrix[BOARD_SIZE / 2, BOARD_SIZE / 2 - 1] = Tile.Red;
             tileMatrix[BOARD_SIZE / 2 - 1, BOARD_SIZE / 2] = Tile.Red;
         }
-
         #endregion
     }
 }

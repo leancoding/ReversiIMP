@@ -9,7 +9,9 @@ namespace ReversiIMP
 {
     /// <summary>
     /// Class om de spel logica te kunnen verwerken
+    /// TO-DO: Alle parameters veranderen zodat alleen de CurrentPlayer nodig is. 
     /// </summary>
+
     class GameCore
     {
         #region members
